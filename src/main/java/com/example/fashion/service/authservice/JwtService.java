@@ -10,10 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.example.fashion.domain.entity.mysqltables.RefreshToken;
+import com.example.fashion.domain.entity.mysqltables.UnusedAcessToken;
 import com.example.fashion.domain.entity.mysqltables.User;
 import com.example.fashion.dto.response.CreateNewAccessTokenResponse;
 import com.example.fashion.exception.BadRequestException;
 import com.example.fashion.repository.RefreshTokenRepository;
+import com.example.fashion.repository.UnusedAccessTokenRepository;
 import com.example.fashion.repository.UserRepository;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -22,6 +24,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 
 @Component
 public class JwtService {
@@ -30,9 +33,11 @@ public class JwtService {
     private static final long refreshTokenLifeTime= 1000*60*60*24*7;
     private final UserRepository userRepo;
     private final RefreshTokenRepository refreshTokenRepo;
-    public JwtService(UserRepository userRepo, RefreshTokenRepository refreshTokenRepo) {
+    private final UnusedAccessTokenRepository unusedAccessTokenRepo;
+    public JwtService(UserRepository userRepo, RefreshTokenRepository refreshTokenRepo, UnusedAccessTokenRepository unusedAccessTokenRepo) {
         this.userRepo=userRepo;
         this.refreshTokenRepo= refreshTokenRepo;
+        this.unusedAccessTokenRepo= unusedAccessTokenRepo;
     } 
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -116,15 +121,13 @@ public class JwtService {
         String email = extractEmail(token);
         return userRepo.findByEmail(email);
     }
-    /*@Transactional
+    @Transactional
     public void handleLogout(String acessToken, String refreshToken)  {
-        Token accessToken = new Token();
-        accessToken.setAddAt(new Date());
-        accessToken.setToken(acessToken);
-        tokenRepo.save(accessToken);
+        UnusedAcessToken accessToken= new UnusedAcessToken(acessToken, extractExpiredDate(acessToken));
+        unusedAccessTokenRepo.save(accessToken);
         RefreshToken rfToken = refreshTokenRepo.findByToken(refreshToken);
         refreshTokenRepo.delete(rfToken);
-    }*/
+    }
 
     public CreateNewAccessTokenResponse createNewAcessToken(String refreshToken) {
         String email = extractEmail(refreshToken);

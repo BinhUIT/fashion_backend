@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.fashion.domain.entity.mysqltables.Role;
 import com.example.fashion.domain.entity.mysqltables.User;
 import com.example.fashion.dto.request.LoginRequest;
+import com.example.fashion.dto.request.LogoutRequest;
 import com.example.fashion.dto.request.RegisterRequest;
 import com.example.fashion.dto.response.CreateNewAccessTokenResponse;
 import com.example.fashion.dto.response.LoginResponse;
@@ -67,5 +68,8 @@ public class AuthService implements UserDetailsService {
     }
     public CreateNewAccessTokenResponse createNewAcessToken(String refreshToken) {
         return jwtService.createNewAcessToken(refreshToken);
+    }
+    public void logout(LogoutRequest request) {
+        jwtService.handleLogout(request.getAccessToken(), request.getRefreshToken());
     }
 }

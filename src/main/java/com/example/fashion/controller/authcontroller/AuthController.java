@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.fashion.dto.request.LoginRequest;
+import com.example.fashion.dto.request.LogoutRequest;
 import com.example.fashion.dto.request.RegisterRequest;
 import com.example.fashion.dto.response.CreateNewAccessTokenResponse;
 import com.example.fashion.dto.response.GlobalResponse;
@@ -44,5 +45,11 @@ public class AuthController {
         CreateNewAccessTokenResponse result = authService.createNewAcessToken(refreshToken);
         GlobalResponse<CreateNewAccessTokenResponse> response = new GlobalResponse<>(Message.successMessage, result, 200);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public String logout(@RequestBody LogoutRequest request) {
+        authService.logout(request);
+        return Message.successMessage;
     }
 }
