@@ -10,4 +10,5 @@ public class Message {
     public static final String invalidPassword="Password must contains at least 8 characters";
     public static final String emailUsed = "Email has been used";
     public static final String invalidPhone="Invalid phone number";
+    public static final String invalidRefreshToken="Invalid refresh token";
 }

@@ -14,6 +14,7 @@ import com.example.fashion.domain.entity.mysqltables.Role;
 import com.example.fashion.domain.entity.mysqltables.User;
 import com.example.fashion.dto.request.LoginRequest;
 import com.example.fashion.dto.request.RegisterRequest;
+import com.example.fashion.dto.response.CreateNewAccessTokenResponse;
 import com.example.fashion.dto.response.LoginResponse;
 import com.example.fashion.dto.response.RegisterResponse;
 import com.example.fashion.dto.response.UserInfo;
@@ -63,5 +64,8 @@ public class AuthService implements UserDetailsService {
         User user = new User(request, hashedPassword,role);
         user = userRepo.save(user);
         return new RegisterResponse(new UserInfo(user));
+    }
+    public CreateNewAccessTokenResponse createNewAcessToken(String refreshToken) {
+        return jwtService.createNewAcessToken(refreshToken);
     }
 }

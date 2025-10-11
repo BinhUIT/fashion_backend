@@ -9,7 +9,11 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.example.fashion.domain.entity.mysqltables.RefreshToken;
 import com.example.fashion.domain.entity.mysqltables.User;
+import com.example.fashion.dto.response.CreateNewAccessTokenResponse;
+import com.example.fashion.exception.BadRequestException;
+import com.example.fashion.repository.RefreshTokenRepository;
 import com.example.fashion.repository.UserRepository;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -25,9 +29,10 @@ public class JwtService {
     private static final int accessTokenLifeTime=1000 * 60 *15;
     private static final long refreshTokenLifeTime= 1000*60*60*24*7;
     private final UserRepository userRepo;
-
-    public JwtService(UserRepository userRepo) {
+    private final RefreshTokenRepository refreshTokenRepo;
+    public JwtService(UserRepository userRepo, RefreshTokenRepository refreshTokenRepo) {
         this.userRepo=userRepo;
+        this.refreshTokenRepo= refreshTokenRepo;
     } 
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -48,9 +53,9 @@ public class JwtService {
     private String createRefreshToken(Map<String, Object> claims, String email) {
         String refreshToken =Jwts.builder().setClaims(claims).setSubject(email).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + refreshTokenLifeTime))
         .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
-        /*RefreshToken rfToken = new RefreshToken();
+        RefreshToken rfToken = new RefreshToken(refreshToken,extractExpiredDate(refreshToken));
         rfToken.setToken(refreshToken);
-        refreshTokenRepo.save(rfToken);*/
+        refreshTokenRepo.save(rfToken);
         return refreshToken;
     }
     public String extractEmail(String token) {
@@ -82,7 +87,7 @@ public class JwtService {
         long ttl = expireAt.getTime()-createAt.getTime();
         return ttl<refreshTokenLifeTime;
     }
-    /*public boolean validateRefreshToken(String token , UserDetails userDetails) {
+    public boolean validateRefreshToken(String token , UserDetails userDetails) {
         RefreshToken refreshToken = refreshTokenRepo.findByToken(token);
         if(refreshToken==null) {
             return false;
@@ -95,7 +100,7 @@ public class JwtService {
         } 
         }
         return isValid;
-    }*/
+    }
     private <T> T extractClaim(String token, Function<Claims,T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -121,18 +126,18 @@ public class JwtService {
         refreshTokenRepo.delete(rfToken);
     }*/
 
-    /*public CreateNewAcessTokenResponse createNewAcessToken(String refreshToken) {
+    public CreateNewAccessTokenResponse createNewAcessToken(String refreshToken) {
         String email = extractEmail(refreshToken);
         UserDetails userDetails = userRepo.findByEmail(email);
         
         if(!validateRefreshToken(refreshToken, userDetails)) {
             System.out.println("Invalid refresh token");
-            throw new UnauthorizedException("Invalid refresh token");
+            throw new BadRequestException("Invalid refresh token");
         }
-        String newAcessToken= generateToken(email);
-        return new CreateNewAcessTokenResponse(newAcessToken, extractExpiredDate(newAcessToken));
+        String newAcessToken= generateAccessToken(email);
+        return new CreateNewAccessTokenResponse(newAcessToken, extractExpiredDate(newAcessToken));
     
     
-    }*/
+    }
 
 }
