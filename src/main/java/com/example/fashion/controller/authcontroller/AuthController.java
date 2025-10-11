@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.fashion.dto.request.LoginRequest;
+import com.example.fashion.dto.request.RegisterRequest;
 import com.example.fashion.dto.response.GlobalResponse;
 import com.example.fashion.dto.response.LoginResponse;
+import com.example.fashion.dto.response.RegisterResponse;
 import com.example.fashion.service.authservice.AuthService;
 import com.example.fashion.util.Message;
 
@@ -24,6 +26,13 @@ public class AuthController {
     public ResponseEntity<GlobalResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
         LoginResponse result = authService.login(request);
         GlobalResponse<LoginResponse> response = new GlobalResponse<>(Message.successMessage, result, 200);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<GlobalResponse<RegisterResponse>> register(@RequestBody RegisterRequest request) {
+        RegisterResponse result = authService.register(request);
+        GlobalResponse<RegisterResponse> response = new GlobalResponse<>(Message.successMessage,result, 200);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.fashion.domain.enums.EAuthProvider;
+import com.example.fashion.dto.request.RegisterRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -124,6 +125,18 @@ public class User implements UserDetails {
     public User() {
     }
 
+    public User(RegisterRequest request, String hashedPassword, Role role) {
+        this.name=request.getName();
+        this.email= request.getEmail();
+        this.password=hashedPassword;
+        this.authProvider=EAuthProvider.DEFAULT;
+        this.role=role;
+        this.createAt= new Date();
+        this.updateAt=null;
+        this.isActive=true;
+        this.address=request.getAddress();
+        this.phone=request.getPhone();
+    }
     public String getAddress() {
         return this.address;
     } 
