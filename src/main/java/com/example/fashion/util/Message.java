@@ -5,4 +5,5 @@ public class Message {
     public static final String successMessage="Success";
     public static final String invaliParam="Invalid params";
     public static final String serverError="Error! Please reload page";
+    public static final String badCredential="Bad credential";
 }
