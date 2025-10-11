@@ -29,12 +29,14 @@ public class AuthService implements UserDetailsService {
     private final UserValidator userValidator;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepo;
-    public AuthService(UserRepository userRepo, @Lazy AuthenticationManager authenticationManager, UserValidator userValidator, @Lazy PasswordEncoder passwordEncoder, RoleRepository roleRepo) {
+    private final JwtService jwtService;
+    public AuthService(UserRepository userRepo, @Lazy AuthenticationManager authenticationManager, UserValidator userValidator, @Lazy PasswordEncoder passwordEncoder, RoleRepository roleRepo, JwtService jwtService) {
         this.userRepo= userRepo;
         this.authenticationManager= authenticationManager;
         this.userValidator= userValidator;
         this.passwordEncoder= passwordEncoder;
         this.roleRepo= roleRepo;
+        this.jwtService= jwtService;
 
     }
     @Override
@@ -46,7 +48,9 @@ public class AuthService implements UserDetailsService {
         if(auth.isAuthenticated()) {
             Object userPrincipal = auth.getPrincipal();
             if(userPrincipal instanceof User user) {
-                return new LoginResponse(new UserInfo(user), null, null);
+                String accessToken = jwtService.generateAccessToken(user.getEmail());
+                String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+                return new LoginResponse(new UserInfo(user), accessToken, refreshToken);
             }
             
         }

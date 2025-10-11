@@ -12,16 +12,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+import com.example.fashion.securtityfilter.JwtAuthFilter;
 import com.example.fashion.service.authservice.AuthService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final AuthService authService;
-    public SecurityConfig(AuthService authService) {
+    private final JwtAuthFilter jwtFilter;
+    public SecurityConfig(AuthService authService, JwtAuthFilter jwtFilter) {
         this.authService = authService;
+        this.jwtFilter= jwtFilter;
     } 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -41,11 +44,11 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth->auth.requestMatchers("/product/**","/auth/**").permitAll()
         .requestMatchers("/user/**").hasAnyAuthority("USER","ADMIN") 
         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-        .requestMatchers("/shipper/**").hasAnyAuthority("SHIPPER")
+        
         .anyRequest().authenticated()
         )
         .formLogin(Customizer.withDefaults());
-        
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean
