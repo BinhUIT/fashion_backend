@@ -1,5 +1,7 @@
 package com.example.fashion.dto.request;
 
+import java.util.List;
+
 import com.example.fashion.domain.enums.EPaymentType;
 
 public class OrderRequest {
@@ -7,8 +9,15 @@ public class OrderRequest {
     private String phone;
     private EPaymentType paymentType;
     private String couponCode;
+    private List<OrderDetailRequest> listDetailRequest;
     public String getAddress() {
         return address;
+    }
+    public List<OrderDetailRequest> getListDetailRequest() {
+        return this.listDetailRequest;
+    }
+    public void setListDetailRequest(List<OrderDetailRequest> listDetailRequest) {
+        this.listDetailRequest= listDetailRequest;
     }
     public void setAddress(String address) {
         this.address = address;
@@ -31,11 +40,12 @@ public class OrderRequest {
     public void setCouponCode(String couponCode) {
         this.couponCode = couponCode;
     }
-    public OrderRequest(String address, String phone, EPaymentType paymentType, String couponCode) {
+    public OrderRequest(String address, String phone, EPaymentType paymentType, String couponCode, List<OrderDetailRequest> listDetailRequest) {
         this.address = address;
         this.phone = phone;
         this.paymentType = paymentType;
         this.couponCode = couponCode;
+        this.listDetailRequest=listDetailRequest;
     }
     public OrderRequest() {
     }

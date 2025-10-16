@@ -52,5 +52,10 @@ public class OrderDetail {
         this.productVariant = productVariant;
         this.amount= amount;
     }
-    
+    public OrderDetail(Order order, ProductVariant productVariant, int amount) {
+        this.order= order;
+        this.productVariant= productVariant;
+        this.amount=amount;
+        this.id= new OrderDetailKey(order.getId(), productVariant.getId());
+    }
 }

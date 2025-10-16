@@ -11,4 +11,7 @@ public class Message {
     public static final String emailUsed = "Email has been used";
     public static final String invalidPhone="Invalid phone number";
     public static final String invalidRefreshToken="Invalid refresh token";
+    public static final String createOrderSuccess = "Create order success";
+    public static final String oneOrMoreVariantNotFound = "One or more product variants not found";
+    public static final String notEnoughProduct="Sorry! Not enough product";
 }

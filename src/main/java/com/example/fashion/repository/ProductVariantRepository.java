@@ -14,4 +14,5 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     boolean existsByProductAndProductColor_IdAndProductSize_Id(Product product, int colorId, int sizeId);
     public List<ProductVariant> findByProductColor_IdIn(List<Integer> colorIds);
     public List<ProductVariant> findByProductSize_IdIn(List<Integer> sizeIds);
+    public List<ProductVariant> findByIdIn(List<Integer> listIds);
 }
