@@ -19,8 +19,15 @@ public class OrderDetail {
     @ManyToOne
     @MapsId("productVariantId")
     private ProductVariant productVariant;
+    private int amount;
     public OrderDetailKey getId() {
         return id;
+    }
+    public int getAmount() {
+        return this.amount;
+    } 
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
     public void setId(OrderDetailKey id) {
         this.id = id;
@@ -39,10 +46,11 @@ public class OrderDetail {
     }
     public OrderDetail() {
     }
-    public OrderDetail(OrderDetailKey id, Order order, ProductVariant productVariant) {
+    public OrderDetail(OrderDetailKey id, Order order, ProductVariant productVariant, int amount) {
         this.id = id;
         this.order = order;
         this.productVariant = productVariant;
+        this.amount= amount;
     }
     
 }
